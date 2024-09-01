@@ -142,6 +142,14 @@ func DetectOs() (osReleaseStruct, string, error) {
 	return ors, osVariant, nil
 }
 
+func processAptOutput(text string) (string, error) {
+	var output string
+
+	log.Fatal(text)
+
+	return output, nil
+}
+
 func getAptListOutput() (string, error) {
 	var output string
 
@@ -199,6 +207,11 @@ func processUpdates(output string, osFamily string) (UpdateStruct, error) {
 			updates = append(updates, u)
 		}
 		us.Updates = updates
+	} else if osFamily == "debian" {
+		_, err := processAptOutput(output)
+		if err != nil {
+			return us, err
+		}
 	}
 
 	us.UpdateCount = count
