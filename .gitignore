@@ -26,3 +26,6 @@ go.work.sum
 
 # Don't track Kate's swap files
 *.kate-swp
+
+# the update-reporter tool should not get checked in
+tools/update-reporter/update-reporter
