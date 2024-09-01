@@ -146,7 +146,7 @@ func processAptOutput(text string) (string, error) {
 	var output string
 
 	// drop the unneeded first line
-	text = strings.Replace(text, "Loading...\n", "", -1)
+	text = strings.Replace(text, "Listing...\n", "", -1)
 	log.Fatal(text)
 
 	return output, nil
