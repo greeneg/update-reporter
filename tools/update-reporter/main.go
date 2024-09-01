@@ -31,8 +31,6 @@ import (
 
 	fqdn "github.com/Showmax/go-fqdn"
 	"github.com/matishsiao/goInfo"
-	//	"github.com/pborman/getopt/v2"
-	//	"golang.org/x/term"
 )
 
 type osReleaseStruct struct {
@@ -142,14 +140,12 @@ func DetectOs() (osReleaseStruct, string, error) {
 	return ors, osVariant, nil
 }
 
-func processAptOutput(text string) (string, error) {
-	var output string
-
+func processAptOutput(text string) ([]string, error) {
 	// drop the unneeded first line
 	text = strings.Replace(text, "Listing...\n", "", -1)
-	log.Fatal(text)
+	lines := strings.Split(text, "\n")
 
-	return output, nil
+	return lines, nil
 }
 
 func getAptListOutput() (string, error) {
@@ -186,6 +182,57 @@ func getZypperLuOutput() (string, error) {
 	return output, nil
 }
 
+func getPkgName(line string) string {
+	pkgName := strings.Split(line, "/")[0]
+	return pkgName
+}
+
+func getPkgVersion(line string) string {
+	pkgVersion := strings.Split(line, " ")[1]
+	return pkgVersion
+}
+
+func getPkgArchitecture(line string) string {
+	pkgArch := strings.Split(line, " ")[2]
+	if pkgArch == "all" {
+		return "noarch"
+	} else if pkgArch == "arm64" {
+		return "aarch64"
+	}
+	return pkgArch
+}
+
+func getPkgOldVersion(line string) string {
+	pkgOldVersion := strings.Split(line, "from: ")[1]
+	pkgOldVersion = strings.Replace(pkgOldVersion, "]", "", -1)
+	return pkgOldVersion
+}
+
+func getAptShowOutput(pkg string) (string, error) {
+	var output string
+
+	out, err := exec.Command("apt", "show", pkg).Output()
+	if err != nil {
+		return "", err
+	}
+
+	output = string(out)
+	return output, nil
+}
+
+func getPkgSummary(line string) string {
+	var summary string
+	pkgName := getPkgName(line)
+	aptShowOut, _ := getAptShowOutput(pkgName)
+	lines := strings.Split(aptShowOut, "\n")
+	for _, line := range lines {
+		if strings.HasPrefix(line, "Description: ") {
+			summary = strings.Replace(line, "Description: ", "", -1)
+		}
+	}
+	return summary
+}
+
 func processUpdates(output string, osFamily string) (UpdateStruct, error) {
 	us := UpdateStruct{}
 
@@ -210,10 +257,29 @@ func processUpdates(output string, osFamily string) (UpdateStruct, error) {
 		}
 		us.Updates = updates
 	} else if osFamily == "debian" {
-		_, err := processAptOutput(output)
+		aptOutput, err := processAptOutput(output)
 		if err != nil {
 			return us, err
 		}
+		updates := make([]Update, 0)
+		for _, line := range aptOutput {
+			if line == "" { break } // need to trim lines from processed output
+			count++
+			u := Update{}
+			u.Kind = "package" // Debian based distributions don't have patch or other types
+			pkgName := getPkgName(line)
+			pkgVersion := getPkgVersion(line)
+			pkgArch := getPkgArchitecture(line)
+			pkgOldVersion := getPkgOldVersion(line)
+			pkgSummary := getPkgSummary(line)
+			u.Name = pkgName
+			u.Version = pkgVersion
+			u.Arch = pkgArch
+			u.OldVersion = pkgOldVersion
+			u.Summary = pkgSummary
+			updates = append(updates, u)
+		}
+		us.Updates = updates
 	}
 
 	us.UpdateCount = count
