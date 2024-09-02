@@ -22,6 +22,14 @@ type FailureMsg struct {
 	Error string `json:"error"`
 }
 
+type HealthCheck struct {
+	Db           string `json:"db"`
+	DiskSpace    string `json:"diskSpace"`
+	DiskWritable string `json:"diskWritable"`
+	Health       string `json:"health"`
+	Status       int    `json:"status"`
+}
+
 type PasswordChange struct {
 	OldPassword string `json:"oldPassword"`
 	NewPassword string `json:"newPassword"`

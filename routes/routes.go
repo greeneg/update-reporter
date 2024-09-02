@@ -46,5 +46,5 @@ func PrivateRoutes(g *gin.RouterGroup, u *controllers.UpdateReporter) {
 
 func PublicRoutes(g *gin.RouterGroup, u *controllers.UpdateReporter) {
 	// service related routes
-	g.GET("/health") // service health API
+	g.GET("/health", u.GetHealth) // service health API
 }

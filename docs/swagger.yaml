@@ -18,6 +18,19 @@ definitions:
       error:
         type: string
     type: object
+  model.HealthCheck:
+    properties:
+      db:
+        type: string
+      diskSpace:
+        type: string
+      diskWritable:
+        type: string
+      health:
+        type: string
+      status:
+        type: integer
+    type: object
   model.PasswordChange:
     properties:
       newPassword:
@@ -129,6 +142,23 @@ info:
   title: Update Reporter Daemon
   version: 0.0.1
 paths:
+  /health:
+    get:
+      description: Retrieve overall health of the service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HealthCheck'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HealthCheck'
+      summary: Retrieve overall health of the service
+      tags:
+      - serviceHealth
   /role:
     post:
       consumes:
