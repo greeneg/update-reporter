@@ -44,6 +44,24 @@ definitions:
       userName:
         type: string
     type: object
+  model.Role:
+    properties:
+      Id:
+        type: integer
+      creationDate:
+        type: string
+      description:
+        type: string
+      roleName:
+        type: string
+    type: object
+  model.RolesList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Role'
+        type: array
+    type: object
   model.SuccessMsg:
     properties:
       message:
@@ -113,6 +131,130 @@ info:
   title: Update Reporter Daemon
   version: 0.0.1
 paths:
+  /role:
+    post:
+      consumes:
+      - application/json
+      description: Add a new role
+      parameters:
+      - description: Role data
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/model.Role'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessMsg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Register role
+      tags:
+      - role
+  /role/{roleId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a role
+      parameters:
+      - description: Role Id
+        in: path
+        name: roleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessMsg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Delete role
+      tags:
+      - role
+  /role/byId/{roleId}:
+    get:
+      description: Retrieve a role by its Id
+      parameters:
+      - description: Role ID
+        in: path
+        name: roleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Role'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Retrieve a role by its Id
+      tags:
+      - role
+  /role/byName/{roleName}:
+    get:
+      description: Retrieve a role by its role name
+      parameters:
+      - description: Role Name
+        in: path
+        name: roleName
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Role'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Retrieve a role by its role name
+      tags:
+      - role
+  /roles:
+    get:
+      description: Retrieve list of all roles
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RolesList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Retrieve list of all roles
+      tags:
+      - role
   /user:
     post:
       consumes:

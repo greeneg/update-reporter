@@ -25,6 +25,12 @@ import (
 )
 
 func PrivateRoutes(g *gin.RouterGroup, u *controllers.UpdateReporter) {
+	// Roles
+	g.GET("/roles", u.GetRoles)                      // get all roles
+	g.GET("/role/byId/:roleId", u.GetRoleById)       // get role by Id
+	g.GET("/role/byName/:roleName", u.GetRoleByName) // get role by name
+	g.POST("/role", u.CreateRole)                    // create new role
+	g.DELETE("/role/:roleId", u.DeleteRole)          // delete a role by Id
 	// user related routes
 	g.GET("/users", u.GetUsers)                          // get all users
 	g.GET("/users/byRoleId/:roleId", u.GetUsersByRoleId) // get all users by role Id

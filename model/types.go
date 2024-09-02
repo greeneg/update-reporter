@@ -37,6 +37,17 @@ type ProposedUser struct {
 	Password  string `json:"password"`
 }
 
+type Role struct {
+	Id           int    `json:"Id"`
+	RoleName     string `json:"roleName"`
+	Description  string `json:"description"`
+	CreationDate string `json:"creationDate"`
+}
+
+type RolesList struct {
+	Data []Role `json:"data"`
+}
+
 type User struct {
 	Id                      int    `json:"Id"`
 	UserName                string `json:"userName"`
