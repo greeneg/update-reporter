@@ -7,14 +7,6 @@ import (
 	"time"
 )
 
-type OrgUnit struct {
-	Id           int    `json:"Id"`
-	OUName       string `json:"ouName"`
-	Description  string `json:"description"`
-	CreatorId    int    `json:"creatorId"`
-	CreationDate string `json:"creationDate"`
-}
-
 type Role struct {
 	Id           int    `json:"Id"`
 	RoleName     string `json:"roleName"`
@@ -27,7 +19,6 @@ type User struct {
 	UserName     string
 	FullName     string
 	Status       string
-	OrgUnitId    int
 	RoleId       int
 	CreationDate string
 }
@@ -37,94 +28,6 @@ func convertSqliteTimestamp(t string) string {
 	timeFormat := "2006-01-02 15:04:05"
 	createTime, _ := time.Parse(sqlTimestampFormat, t)
 	return createTime.Format(timeFormat)
-}
-
-func createOU(ouName string, ouDescription string, creatorId int) (bool, error) {
-	t, err := DB.Begin()
-	if err != nil {
-		errPrintln("Could not start DB transaction: " + string(err.Error()))
-		return false, err
-	}
-
-	q, err := t.Prepare("INSERT INTO OrganizationalUnits (OUName, Description, CreatorId) VALUES (?, ?, ?)")
-	if err != nil {
-		errPrintln("Could not prepare the DB query: " + string(err.Error()))
-		return false, err
-	}
-
-	_, err = q.Exec(ouName, ouDescription, creatorId)
-	if err != nil {
-		errPrintln("Cannot create organizational unit '" + ouName + "': " + string(err.Error()))
-		return false, err
-	}
-
-	t.Commit()
-	return false, nil
-}
-
-func getOrgUnitStatus(ouName string) (bool, error) {
-	infoPrintln("OU name: " + ouName)
-	t, err := DB.Begin()
-	if err != nil {
-		errPrintln("Could not start DB transaction: " + string(err.Error()))
-		return false, err
-	}
-
-	q, err := DB.Prepare("SELECT * FROM OrganizationalUnits WHERE OUName IS ?")
-	if err != nil {
-		errPrintln("Could not prepare DB query: " + string(err.Error()))
-		return false, err
-	}
-
-	ou := OrgUnit{}
-	err = q.QueryRow(ouName).Scan(
-		&ou.Id,
-		&ou.OUName,
-		&ou.Description,
-		&ou.CreatorId,
-		&ou.CreationDate,
-	)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			errPrintln("Encountered error when query database: " + string(err.Error()))
-			return false, err
-		}
-		return false, nil
-	}
-
-	t.Commit()
-
-	return true, nil
-}
-
-func getOrgUnitByName(ouName string) (OrgUnit, error) {
-	rec, err := DB.Prepare("SELECT * FROM OrganizationalUnits WHERE OUName = ?")
-	if err != nil {
-		errPrintln("Could not prepare the DB query: " + string(err.Error()))
-		return OrgUnit{}, err
-	}
-
-	ou := OrgUnit{}
-	err = rec.QueryRow(ouName).Scan(
-		&ou.Id,
-		&ou.OUName,
-		&ou.Description,
-		&ou.CreatorId,
-		&ou.CreationDate,
-	)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			errPrintln("No such org unit found in DB: " + string(err.Error()))
-			return OrgUnit{}, nil
-		}
-		errPrintln("Cannot retrieve org unit from DB: " + string(err.Error()))
-		return OrgUnit{}, err
-	}
-
-	ou.CreationDate = convertSqliteTimestamp(ou.CreationDate)
-
-	return ou, nil
-
 }
 
 func getRoleStatus(role string) (bool, error) {
@@ -240,14 +143,14 @@ func getAccountStatus(account string) (bool, error) {
 	return true, nil
 }
 
-func createAccount(accountName string, accountFullName string, orgUnitId int, roleId int, passwd string) (User, error) {
+func createAccount(accountName string, accountFullName string, roleId int, passwd string) (User, error) {
 	t, err := DB.Begin()
 	if err != nil {
 		errPrintln("Could not start DB transaction!" + string(err.Error()))
 		return User{}, err
 	}
 
-	q, err := t.Prepare("INSERT INTO Users (UserName, FullName, OrgUnitId, RoleId, PasswordHash) VALUES (?, ?, ?, ?, ?)")
+	q, err := t.Prepare("INSERT INTO Users (UserName, FullName, RoleId, PasswordHash) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		errPrintln("Could not prepare the DB query!" + string(err.Error()))
 		return User{}, err
@@ -259,7 +162,7 @@ func createAccount(accountName string, accountFullName string, orgUnitId int, ro
 
 	// get the org Id
 
-	_, err = q.Exec(accountName, accountFullName, orgUnitId, roleId, passwdHash)
+	_, err = q.Exec(accountName, accountFullName, roleId, passwdHash)
 	if err != nil {
 		errPrintln("Cannot create user '" + accountName + "': " + string(err.Error()))
 		return User{}, err
@@ -277,7 +180,7 @@ func createAccount(accountName string, accountFullName string, orgUnitId int, ro
 }
 
 func getAccountByName(accountName string) (User, error) {
-	rec, err := DB.Prepare("SELECT Id,UserName,FullName,Status,OrgUnitId,RoleId,CreationDate FROM Users WHERE UserName = ?")
+	rec, err := DB.Prepare("SELECT Id,UserName,FullName,Status,RoleId,CreationDate FROM Users WHERE UserName = ?")
 	if err != nil {
 		errPrintln("Could not prepare the DB query: " + string(err.Error()))
 		return User{}, err
@@ -289,7 +192,6 @@ func getAccountByName(accountName string) (User, error) {
 		&user.UserName,
 		&user.FullName,
 		&user.Status,
-		&user.OrgUnitId,
 		&user.RoleId,
 		&user.CreationDate,
 	)
