@@ -1,4 +1,4 @@
-module github.com/greeneg/update-reporter/tools/update-reporter
+module github.com/greeneg/update-reporterd/tools/update-reporter
 
 go 1.23.0
 
