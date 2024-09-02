@@ -67,38 +67,41 @@ import (
 
 func createDB(dbName string) (bool, error) {
 	log.Println("INFO: DB doesn't exist. Attempt to create it")
-	const schema string = `CREATE TABLE IF NOT EXISTS Roles (
-		Id           INTEGER  PRIMARY KEY AUTOINCREMENT,
-		RoleName     STRING   UNIQUE
-							  NOT NULL,
-		Description  STRING   NOT NULL,
-		CreationDate DATETIME NOT NULL
-							  DEFAULT (CURRENT_TIMESTAMP)
+	const schema string = `CREATE TABLE IF NOT EXISTS OsFamilies (
+		Id                      INTEGER		PRIMARY KEY AUTOINCREMENT	UNIQUE	NOT NULL,
+		FamilyName              STRING		UNIQUE				NOT NULL,
+		CreationDate            DATETIME	NOT NULL			DEFAULT (CURRENT_TIMESTAMP)
+	);
+
+	INSERT INTO OsFamilies (Id, FamilyName) VALUES (1, 'linux');
+	INSERT INTO OsFamilies (Id, FamilyName) VALUES (2, 'darwin');
+	INSERT INTO OsFamilies (Id, FamilyName) VALUES (3, 'windows');
+
+	CREATE TABLE IF NOT EXISTS Roles (
+		Id                      INTEGER	PRIMARY KEY AUTOINCREMENT,
+		RoleName                STRING		UNIQUE				NOT NULL,
+		Description             STRING		NOT NULL,
+		CreationDate            DATETIME	NOT NULL		 	DEFAULT (CURRENT_TIMESTAMP)
 	);
 
 	INSERT INTO Roles (Id, RoleName, Description)
-		VALUES ( 1, 'SYSTEM', 'Built-in system role');
+		VALUES (1, 'SYSTEM', 'Built-in system role');
+	INSERT INTO Roles (Id, RoleName, Description)
+		VALUES (2, 'administrators', 'Accounts that have full administrative rights to the system');
 
 	CREATE TABLE IF NOT EXISTS Users (
-		Id                      INTEGER  PRIMARY KEY AUTOINCREMENT
-										 UNIQUE
-										 NOT NULL,
-		UserName                STRING   NOT NULL
-										 UNIQUE,
-		FullName                STRING   NOT NULL,
-		Status                  STRING   NOT NULL
-										 DEFAULT enabled,
-		RoleId                  INTEGER  REFERENCES Roles (Id)
-										 NOT NULL,
-		PasswordHash            STRING   NOT NULL,
-		CreationDate            DATETIME NOT NULL
-										 DEFAULT (CURRENT_TIMESTAMP),
-		LastPasswordChangedDate DATETIME NOT NULL
-										 DEFAULT (CURRENT_TIMESTAMP)
+		Id                      INTEGER 	PRIMARY KEY AUTOINCREMENT	UNIQUE	NOT NULL,
+		UserName                STRING		NOT NULL			UNIQUE,
+		FullName                STRING		NOT NULL,
+		Status                  STRING		NOT NULL			DEFAULT enabled,
+		RoleId                  INTEGER		REFERENCES Roles (Id)		NOT NULL,
+		PasswordHash            STRING		NOT NULL,
+		CreationDate            DATETIME	NOT NULL			DEFAULT (CURRENT_TIMESTAMP),
+		LastPasswordChangedDate DATETIME	NOT NULL			DEFAULT (CURRENT_TIMESTAMP)
 	);
 
 	INSERT INTO Users (Id, UserName, FullName, Status, RoleId, PasswordHash)
-		VALUES ( 1, 'SYSTEM', 'Built-in System User', 'enabled', 1, '!' );
+		VALUES (1, 'SYSTEM', 'Built-in System User', 'enabled', 1, '!');
 	`
 
 	db, err := sql.Open("sqlite3", dbName)
