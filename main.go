@@ -76,8 +76,8 @@ func createDB(dbName string) (bool, error) {
 							  DEFAULT (CURRENT_TIMESTAMP)
 	);
 
-	INSERT INTO Roles (Id, RoleName, Description, CreationDate)
-		VALUES ( 1, 'SYSTEM', 'Built-in system role', '2024-06-01 14:57:41' );
+	INSERT INTO Roles (Id, RoleName, Description)
+		VALUES ( 1, 'SYSTEM', 'Built-in system role');
 
 	CREATE TABLE IF NOT EXISTS Users (
 		Id                      INTEGER  PRIMARY KEY AUTOINCREMENT
@@ -97,8 +97,8 @@ func createDB(dbName string) (bool, error) {
 										 DEFAULT (CURRENT_TIMESTAMP)
 	);
 
-	INSERT INTO Users (Id, UserName, FullName, Status, OrgUnitId, RoleId, PasswordHash, CreationDate, LastPasswordChangedDate)
-		VALUES ( 1, 'SYSTEM', 'Allocator System', 'enabled', 1, 1, '!', '2024-06-01 14:58:36', '2024-06-01 14:58:36' );
+	INSERT INTO Users (Id, UserName, FullName, Status, RoleId, PasswordHash)
+		VALUES ( 1, 'SYSTEM', 'Built-in System User', 'enabled', 1, '!' );
 	`
 
 	db, err := sql.Open("sqlite3", dbName)
