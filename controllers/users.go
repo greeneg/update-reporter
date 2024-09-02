@@ -109,6 +109,11 @@ func (u *UpdateReporter) DeleteUser(c *gin.Context) {
 	_, authed := u.GetUserId(c)
 	if authed {
 		username := c.Param("name")
+		if username == "SYSTEM" || username == "admin" {
+			log.Println("WARNING: Someone tried to remove a protected user!")
+			c.IndentedJSON(http.StatusForbidden, gin.H{"error": "Protected users cannot be removed!"})
+			return
+		}
 		status, err := model.DeleteUser(username)
 		if err != nil {
 			log.Println("ERROR: Cannot delete user: " + string(err.Error()))

@@ -75,6 +75,23 @@ func (u *UpdateReporter) DeleteRole(c *gin.Context) {
 	_, authed := u.GetUserId(c)
 	if authed {
 		roleId, _ := strconv.Atoi(c.Param("roleId"))
+		systemRole, err := model.GetRoleByName("SYSTEM")
+		if err != nil {
+			log.Println("ERROR: Could not retrieve role by Id" + string(err.Error()))
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve built-in SYSTEM role! " + string(err.Error())})
+			return
+		}
+		adminsRole, err := model.GetRoleByName("administrators")
+		if err != nil {
+			log.Println("ERROR: Could not retrieve role by Id" + string(err.Error()))
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve protected administrators role! " + string(err.Error())})
+			return
+		}
+		if systemRole.RoleName == "SYSTEM" || adminsRole.RoleName == "administrators" {
+			log.Println("WARNING: Someone tried to remove a protected role!")
+			c.IndentedJSON(http.StatusForbidden, gin.H{"error": "Protected roles cannot be removed!"})
+			return
+		}
 		status, err := model.DeleteRole(roleId)
 		if err != nil {
 			log.Println("ERROR: Cannot delete role: " + string(err.Error()))
