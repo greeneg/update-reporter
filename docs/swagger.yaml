@@ -1,4 +1,106 @@
 basePath: /api/v1
+definitions:
+  controllers.SafeUser:
+    properties:
+      creationDate:
+        type: string
+      fullName:
+        type: string
+      id:
+        type: integer
+      orgUnitId:
+        type: integer
+      roleId:
+        type: integer
+      userName:
+        type: string
+    type: object
+  model.FailureMsg:
+    properties:
+      error:
+        type: string
+    type: object
+  model.PasswordChange:
+    properties:
+      newPassword:
+        type: string
+      oldPassword:
+        type: string
+    type: object
+  model.ProposedUser:
+    properties:
+      Id:
+        type: integer
+      fullName:
+        type: string
+      orgUnitId:
+        type: integer
+      password:
+        type: string
+      roleId:
+        type: integer
+      status:
+        type: string
+      userName:
+        type: string
+    type: object
+  model.SuccessMsg:
+    properties:
+      message:
+        type: string
+    type: object
+  model.User:
+    properties:
+      Id:
+        type: integer
+      creationDate:
+        type: string
+      fullName:
+        type: string
+      lastPasswordChangedDate:
+        type: string
+      orgUnitId:
+        type: integer
+      passwordHash:
+        type: string
+      roleId:
+        type: integer
+      status:
+        type: string
+      userName:
+        type: string
+    type: object
+  model.UserRoleId:
+    properties:
+      roleId:
+        type: integer
+    type: object
+  model.UserRoleIdMsg:
+    properties:
+      message:
+        type: string
+      roleId:
+        type: integer
+    type: object
+  model.UserStatus:
+    properties:
+      status:
+        type: string
+    type: object
+  model.UserStatusMsg:
+    properties:
+      message:
+        type: string
+      userStatus:
+        type: string
+    type: object
+  model.UsersList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+    type: object
 host: localhost:5000
 info:
   contact:
@@ -10,7 +112,274 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: Update Reporter Daemon
   version: 0.0.1
-paths: {}
+paths:
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Add a new user
+      parameters:
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProposedUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessMsg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Register user
+      tags:
+      - user
+  /user/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user
+      parameters:
+      - description: User name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessMsg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Delete user
+      tags:
+      - user
+    patch:
+      consumes:
+      - application/json
+      description: Change password
+      parameters:
+      - description: User name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Password data
+        in: body
+        name: changePassword
+        required: true
+        schema:
+          $ref: '#/definitions/model.PasswordChange'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SuccessMsg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      summary: Change password
+      tags:
+      - user
+  /user/{name}/roleId:
+    patch:
+      consumes:
+      - application/json
+      description: Set a user's role Id
+      parameters:
+      - description: Role Id
+        in: body
+        name: roleId
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserRoleId'
+      - description: User name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserRoleIdMsg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Set a user's role Id
+      tags:
+      - user
+  /user/{name}/status:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a user's active status
+      parameters:
+      - description: User name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserStatusMsg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Retrieve a user's active status. Can be either 'enabled' or 'locked'
+      tags:
+      - user
+    patch:
+      consumes:
+      - application/json
+      description: Set a user's active status
+      parameters:
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserStatus'
+      - description: User name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserStatusMsg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Set a user's active status. Can be either 'enabled' or 'locked'
+      tags:
+      - user
+  /user/id/{id}:
+    get:
+      description: Retrieve a user by their Id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.SafeUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      summary: Retrieve a user by their Id
+      tags:
+      - user
+  /user/name/{name}:
+    get:
+      description: Retrieve a user by their UserName
+      parameters:
+      - description: User name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.SafeUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      summary: Retrieve a user by their UserName
+      tags:
+      - user
+  /users:
+    get:
+      description: Retrieve list of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UsersList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Retrieve list of all users
+      tags:
+      - user
+  /users/byRoleId/{roleId}:
+    get:
+      description: Retrieve list of users by role Id
+      parameters:
+      - description: Role Id
+        in: path
+        name: roleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UsersList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      security:
+      - BasicAuth: []
+      summary: Retrieve list of users by role Id
+      tags:
+      - user
 securityDefinitions:
   BasicAuth:
     type: basic

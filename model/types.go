@@ -18,6 +18,25 @@ package model
 
 */
 
+type FailureMsg struct {
+	Error string `json:"error"`
+}
+
+type PasswordChange struct {
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
+}
+
+type ProposedUser struct {
+	Id        int    `json:"Id"`
+	UserName  string `json:"userName"`
+	FullName  string `json:"fullName"`
+	Status    string `json:"status" enum:"enabled,disabled"`
+	OrgUnitId int    `json:"orgUnitId"`
+	RoleId    int    `json:"roleId"`
+	Password  string `json:"password"`
+}
+
 type User struct {
 	Id                      int    `json:"Id"`
 	UserName                string `json:"userName"`
@@ -28,4 +47,30 @@ type User struct {
 	PasswordHash            string `json:"passwordHash"`
 	CreationDate            string `json:"creationDate"`
 	LastPasswordChangedDate string `json:"lastPasswordChangedDate"`
+}
+
+type UserRoleId struct {
+	RoleId int `json:"roleId"`
+}
+
+type UserRoleIdMsg struct {
+	Message    string `json:"message"`
+	UserRoleId int    `json:"roleId"`
+}
+
+type UsersList struct {
+	Data []User `json:"data"`
+}
+
+type UserStatus struct {
+	Status string `json:"status" enum:"enabled,disabled"`
+}
+
+type UserStatusMsg struct {
+	Message    string `json:"message"`
+	UserStatus string `json:"userStatus" enum:"enabled,disabled"`
+}
+
+type SuccessMsg struct {
+	Message string `json:"message"`
 }

@@ -26,18 +26,16 @@ import (
 
 func PrivateRoutes(g *gin.RouterGroup, u *controllers.UpdateReporter) {
 	// user related routes
-	g.GET("/users")                  // get all users
-	g.GET("/users/byOuId/:ouId")     // get all users by organizational unit Id
-	g.GET("/users/byRoleId/:roleId") // get all users by role Id
-	g.GET("/user/:name")             // get a user by username
-	g.GET("/user/:name/status")      // get whether a user is locked or not
-	g.GET("/user/byId/:id")          // get a user by Id
-	g.POST("/user")                  // create new user
-	g.PATCH("/user/:name")           // update a user password
-	g.PATCH("/user/:name/status")    // lock a user
-	g.PATCH("/user/:name/ouId")      // set a user's organizational unit Id
-	g.PATCH("/user/:name/roleId")    // set a user's role Id
-	g.DELETE("/user/:name")          // trash a user
+	g.GET("/users", u.GetUsers)                          // get all users
+	g.GET("/users/byRoleId/:roleId", u.GetUsersByRoleId) // get all users by role Id
+	g.GET("/user/:name", u.GetUserByUserName)            // get a user by username
+	g.GET("/user/:name/status", u.GetUserStatus)         // get whether a user is locked or not
+	g.GET("/user/byId/:id", u.GetUserById)               // get a user by Id
+	g.POST("/user", u.CreateUser)                        // create new user
+	g.PATCH("/user/:name", u.ChangeAccountPassword)      // update a user password
+	g.PATCH("/user/:name/status", u.SetUserStatus)       // lock a user
+	g.PATCH("/user/:name/roleId", u.SetUserRoleId)       // set a user's role Id
+	g.DELETE("/user/:name", u.DeleteUser)                // trash a user
 }
 
 func PublicRoutes(g *gin.RouterGroup, u *controllers.UpdateReporter) {
