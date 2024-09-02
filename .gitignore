@@ -35,3 +35,6 @@ tools/update-reporter/update-reporter
 
 # don't track the DB itself
 *.db
+
+# don't ship our config.json
+config/config.json
