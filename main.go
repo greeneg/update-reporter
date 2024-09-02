@@ -67,7 +67,39 @@ import (
 
 func createDB(dbName string) (bool, error) {
 	log.Println("INFO: DB doesn't exist. Attempt to create it")
-	const schema string = ``
+	const schema string = `CREATE TABLE IF NOT EXISTS Roles (
+		Id           INTEGER  PRIMARY KEY AUTOINCREMENT,
+		RoleName     STRING   UNIQUE
+							  NOT NULL,
+		Description  STRING   NOT NULL,
+		CreationDate DATETIME NOT NULL
+							  DEFAULT (CURRENT_TIMESTAMP)
+	);
+
+	INSERT INTO Roles (Id, RoleName, Description, CreationDate)
+		VALUES ( 1, 'SYSTEM', 'Built-in system role', '2024-06-01 14:57:41' );
+
+	CREATE TABLE IF NOT EXISTS Users (
+		Id                      INTEGER  PRIMARY KEY AUTOINCREMENT
+										 UNIQUE
+										 NOT NULL,
+		UserName                STRING   NOT NULL
+										 UNIQUE,
+		FullName                STRING   NOT NULL,
+		Status                  STRING   NOT NULL
+										 DEFAULT enabled,
+		RoleId                  INTEGER  REFERENCES Roles (Id)
+										 NOT NULL,
+		PasswordHash            STRING   NOT NULL,
+		CreationDate            DATETIME NOT NULL
+										 DEFAULT (CURRENT_TIMESTAMP),
+		LastPasswordChangedDate DATETIME NOT NULL
+										 DEFAULT (CURRENT_TIMESTAMP)
+	);
+
+	INSERT INTO Users (Id, UserName, FullName, Status, OrgUnitId, RoleId, PasswordHash, CreationDate, LastPasswordChangedDate)
+		VALUES ( 1, 'SYSTEM', 'Allocator System', 'enabled', 1, 1, '!', '2024-06-01 14:58:36', '2024-06-01 14:58:36' );
+	`
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
@@ -99,7 +131,7 @@ func main() {
 	helpers.FatalCheckError(err)
 
 	// create an app object that contains our routes and the configuration
-	UpdateReporter := new(controllers.Allocator)
+	UpdateReporter := new(controllers.UpdateReporter)
 	UpdateReporter.AppPath = appdir
 	UpdateReporter.ConfigPath = configDir
 	UpdateReporter.ConfStruct = config
