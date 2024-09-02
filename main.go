@@ -60,7 +60,7 @@ import (
 //	@license.name	Apache 2.0
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-//	@host		localhost:5000
+//	@host		localhost:8000
 //	@BasePath	/api/v1
 
 //	@schemas	http https

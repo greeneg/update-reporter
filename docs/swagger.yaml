@@ -119,7 +119,7 @@ definitions:
           $ref: '#/definitions/model.User'
         type: array
     type: object
-host: localhost:5000
+host: localhost:8000
 info:
   contact:
     name: Gary Greene
