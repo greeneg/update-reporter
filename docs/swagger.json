@@ -61,7 +61,7 @@
                 }
             }
         },
-        "/role/byId/{roleId}": {
+        "/role/id/{roleId}": {
             "get": {
                 "security": [
                     {
@@ -101,7 +101,7 @@
                 }
             }
         },
-        "/role/byName/{roleName}": {
+        "/role/name/{roleName}": {
             "get": {
                 "security": [
                     {
@@ -118,7 +118,7 @@
                 "summary": "Retrieve a role by its role name",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Role Name",
                         "name": "roleName",
                         "in": "path",
@@ -328,9 +328,7 @@
                         }
                     }
                 }
-            }
-        },
-        "/user/{name}": {
+            },
             "delete": {
                 "security": [
                     {
@@ -418,7 +416,7 @@
                 }
             }
         },
-        "/user/{name}/roleId": {
+        "/user/name/{name}/roleId": {
             "patch": {
                 "security": [
                     {
@@ -470,7 +468,7 @@
                 }
             }
         },
-        "/user/{name}/status": {
+        "/user/name/{name}/status": {
             "get": {
                 "security": [
                     {
@@ -594,7 +592,7 @@
                 }
             }
         },
-        "/users/byRoleId/{roleId}": {
+        "/users/roleId/{roleId}": {
             "get": {
                 "security": [
                     {
@@ -646,9 +644,6 @@
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "orgUnitId": {
                     "type": "integer"
                 },
                 "roleId": {

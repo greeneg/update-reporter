@@ -30,7 +30,6 @@ type SafeUser struct {
 	Id           int
 	UserName     string
 	FullName     string
-	OrgUnitId    int
 	RoleId       int
 	CreationDate string
 }

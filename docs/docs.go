@@ -67,7 +67,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/role/byId/{roleId}": {
+        "/role/id/{roleId}": {
             "get": {
                 "security": [
                     {
@@ -107,7 +107,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/role/byName/{roleName}": {
+        "/role/name/{roleName}": {
             "get": {
                 "security": [
                     {
@@ -124,7 +124,7 @@ const docTemplate = `{
                 "summary": "Retrieve a role by its role name",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Role Name",
                         "name": "roleName",
                         "in": "path",
@@ -334,9 +334,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/user/{name}": {
+            },
             "delete": {
                 "security": [
                     {
@@ -424,7 +422,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/{name}/roleId": {
+        "/user/name/{name}/roleId": {
             "patch": {
                 "security": [
                     {
@@ -476,7 +474,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/{name}/status": {
+        "/user/name/{name}/status": {
             "get": {
                 "security": [
                     {
@@ -600,7 +598,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/byRoleId/{roleId}": {
+        "/users/roleId/{roleId}": {
             "get": {
                 "security": [
                     {
@@ -652,9 +650,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "orgUnitId": {
                     "type": "integer"
                 },
                 "roleId": {

@@ -71,7 +71,7 @@ func (u *UpdateReporter) CreateUser(c *gin.Context) {
 //	@Param			changePassword	body	model.PasswordChange	true	"Password data"
 //	@Success		200	{object}	model.SuccessMsg
 //	@Failure		400	{object}	model.FailureMsg
-//	@Router			/user/{name} [patch]
+//	@Router			/user/name/{name} [patch]
 func (u *UpdateReporter) ChangeAccountPassword(c *gin.Context) {
 	username := c.Param("name")
 	var json model.PasswordChange
@@ -104,7 +104,7 @@ func (u *UpdateReporter) ChangeAccountPassword(c *gin.Context) {
 //	@Security		BasicAuth
 //	@Success		200	{object}	model.SuccessMsg
 //	@Failure		400	{object}	model.FailureMsg
-//	@Router			/user/{name} [delete]
+//	@Router			/user/name/{name} [delete]
 func (u *UpdateReporter) DeleteUser(c *gin.Context) {
 	_, authed := u.GetUserId(c)
 	if authed {
@@ -137,7 +137,7 @@ func (u *UpdateReporter) DeleteUser(c *gin.Context) {
 //	@Security		BasicAuth
 //	@Success		200	{object}	model.UserStatusMsg
 //	@Failure		400	{object}	model.FailureMsg
-//	@Router			/user/{name}/status [get]
+//	@Router			/user/name/{name}/status [get]
 func (u *UpdateReporter) GetUserStatus(c *gin.Context) {
 	_, authed := u.GetUserId(c)
 	if authed {
@@ -173,7 +173,7 @@ func (u *UpdateReporter) GetUserStatus(c *gin.Context) {
 //	@Security		BasicAuth
 //	@Success		200	{object}	model.UserStatusMsg
 //	@Failure		400	{object}	model.FailureMsg
-//	@Router			/user/{name}/status [patch]
+//	@Router			/user/name/{name}/status [patch]
 func (u *UpdateReporter) SetUserStatus(c *gin.Context) {
 	_, authed := u.GetUserId(c)
 	if authed {
@@ -215,7 +215,7 @@ func (u *UpdateReporter) SetUserStatus(c *gin.Context) {
 //	@Security		BasicAuth
 //	@Success		200 {object}	model.UserRoleIdMsg
 //	@Failure		400 {object}	model.FailureMsg
-//	@Router			/user/{name}/roleId [patch]
+//	@Router			/user/name/{name}/roleId [patch]
 func (u *UpdateReporter) SetUserRoleId(c *gin.Context) {
 	_, authed := u.GetUserId(c)
 	if authed {
@@ -266,7 +266,6 @@ func (u *UpdateReporter) GetUsers(c *gin.Context) {
 			safeUser.Id = user.Id
 			safeUser.UserName = user.UserName
 			safeUser.FullName = user.FullName
-			safeUser.OrgUnitId = user.OrgUnitId
 			safeUser.RoleId = user.RoleId
 			safeUser.CreationDate = user.CreationDate
 
@@ -290,10 +289,10 @@ func (u *UpdateReporter) GetUsers(c *gin.Context) {
 //	@Tags           user
 //	@Produce        json
 //	@Param          roleId	path int true "Role Id"
-//	@Security		BasicAuth
+//	@Security	BasicAuth
 //	@Success        200 {object}	model.UsersList
-//	@Failure		400 {object}	model.FailureMsg
-//	@Router			/users/byRoleId/{roleId} [get]
+//	@Failure	400 {object}	model.FailureMsg
+//	@Router		/users/roleId/{roleId} [get]
 func (u *UpdateReporter) GetUsersByRoleId(c *gin.Context) {
 	_, authed := u.GetUserId(c)
 	if authed {
@@ -307,7 +306,6 @@ func (u *UpdateReporter) GetUsersByRoleId(c *gin.Context) {
 			safeUser.Id = user.Id
 			safeUser.UserName = user.UserName
 			safeUser.FullName = user.FullName
-			safeUser.OrgUnitId = user.OrgUnitId
 			safeUser.RoleId = user.RoleId
 			safeUser.CreationDate = user.CreationDate
 
@@ -345,7 +343,6 @@ func (u *UpdateReporter) GetUserById(c *gin.Context) {
 	safeUser.Id = ent.Id
 	safeUser.UserName = ent.UserName
 	safeUser.FullName = ent.FullName
-	safeUser.OrgUnitId = ent.OrgUnitId
 	safeUser.RoleId = ent.RoleId
 	safeUser.CreationDate = ent.CreationDate
 
@@ -377,7 +374,6 @@ func (u *UpdateReporter) GetUserByUserName(c *gin.Context) {
 	safeUser.Id = ent.Id
 	safeUser.UserName = ent.UserName
 	safeUser.FullName = ent.FullName
-	safeUser.OrgUnitId = ent.OrgUnitId
 	safeUser.RoleId = ent.RoleId
 	safeUser.CreationDate = ent.CreationDate
 

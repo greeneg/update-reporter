@@ -132,7 +132,7 @@ func (u *UpdateReporter) GetRoles(c *gin.Context) {
 //	@Security		BasicAuth
 //	@Success		200	{object}	model.Role
 //	@Failure		400	{object}	model.FailureMsg
-//	@Router			/role/byId/{roleId} [get]
+//	@Router			/role/id/{roleId} [get]
 func (u *UpdateReporter) GetRoleById(c *gin.Context) {
 	_, authed := u.GetUserId(c)
 	if authed {
@@ -160,11 +160,11 @@ func (u *UpdateReporter) GetRoleById(c *gin.Context) {
 //	@Description	Retrieve a role by its role name
 //	@Tags			role
 //	@Produce		json
-//	@Param			roleName	path int true "Role Name"
+//	@Param			roleName	path string true "Role Name"
 //	@Security		BasicAuth
 //	@Success		200	{object}	model.Role
 //	@Failure		400	{object}	model.FailureMsg
-//	@Router			/role/byName/{roleName} [get]
+//	@Router			/role/name/{roleName} [get]
 func (u *UpdateReporter) GetRoleByName(c *gin.Context) {
 	_, authed := u.GetUserId(c)
 	if authed {

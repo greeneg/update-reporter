@@ -8,8 +8,6 @@ definitions:
         type: string
       id:
         type: integer
-      orgUnitId:
-        type: integer
       roleId:
         type: integer
       userName:
@@ -186,7 +184,7 @@ paths:
       summary: Delete role
       tags:
       - role
-  /role/byId/{roleId}:
+  /role/id/{roleId}:
     get:
       description: Retrieve a role by its Id
       parameters:
@@ -211,7 +209,7 @@ paths:
       summary: Retrieve a role by its Id
       tags:
       - role
-  /role/byName/{roleName}:
+  /role/name/{roleName}:
     get:
       description: Retrieve a role by its role name
       parameters:
@@ -219,7 +217,7 @@ paths:
         in: path
         name: roleName
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -283,7 +281,30 @@ paths:
       summary: Register user
       tags:
       - user
-  /user/{name}:
+  /user/id/{id}:
+    get:
+      description: Retrieve a user by their Id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.SafeUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      summary: Retrieve a user by their Id
+      tags:
+      - user
+  /user/name/{name}:
     delete:
       consumes:
       - application/json
@@ -308,6 +329,28 @@ paths:
       security:
       - BasicAuth: []
       summary: Delete user
+      tags:
+      - user
+    get:
+      description: Retrieve a user by their UserName
+      parameters:
+      - description: User name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.SafeUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureMsg'
+      summary: Retrieve a user by their UserName
       tags:
       - user
     patch:
@@ -340,7 +383,7 @@ paths:
       summary: Change password
       tags:
       - user
-  /user/{name}/roleId:
+  /user/name/{name}/roleId:
     patch:
       consumes:
       - application/json
@@ -373,7 +416,7 @@ paths:
       summary: Set a user's role Id
       tags:
       - user
-  /user/{name}/status:
+  /user/name/{name}/status:
     get:
       consumes:
       - application/json
@@ -432,52 +475,6 @@ paths:
       summary: Set a user's active status. Can be either 'enabled' or 'locked'
       tags:
       - user
-  /user/id/{id}:
-    get:
-      description: Retrieve a user by their Id
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/controllers.SafeUser'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.FailureMsg'
-      summary: Retrieve a user by their Id
-      tags:
-      - user
-  /user/name/{name}:
-    get:
-      description: Retrieve a user by their UserName
-      parameters:
-      - description: User name
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/controllers.SafeUser'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.FailureMsg'
-      summary: Retrieve a user by their UserName
-      tags:
-      - user
   /users:
     get:
       description: Retrieve list of all users
@@ -497,7 +494,7 @@ paths:
       summary: Retrieve list of all users
       tags:
       - user
-  /users/byRoleId/{roleId}:
+  /users/roleId/{roleId}:
     get:
       description: Retrieve list of users by role Id
       parameters:
