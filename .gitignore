@@ -30,6 +30,9 @@ go.work.sum
 # the daemon executable should not get checked in
 update-reporterd
 
+# don't track the setuptool binary
+tools/setuptool/setuptool
+
 # the update-reporter tool should not get checked in
 tools/update-reporter/update-reporter
 
@@ -38,3 +41,4 @@ tools/update-reporter/update-reporter
 
 # don't ship our config.json
 config/config.json
+
