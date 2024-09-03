@@ -120,7 +120,7 @@ func createDB(dbName string) (bool, error) {
 		Id                      INTEGER		PRIMARY KEY AUTOINCREMENT		UNIQUE	NOT NULL,
 		SystemId                INTEGER		REFERENCES Systems (Id)			UNIQUE	NOT NULL,
 		UpdateCount		INTEGER		NOT NULL,
-		UpdateRecord            BLOB		NOT NULL,
+		UpdateRecord            JSON		NOT NULL,
 		CreationDate            INTEGER		NOT NULL				DEFAULT (CURRENT_TIMESTAMP)
 		LastUpdateDate          DATETIME	NOT NULL				DEFAULT (CURRENT_TIMESTAMP)
 	);
