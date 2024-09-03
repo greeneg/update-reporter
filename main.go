@@ -49,7 +49,7 @@ import (
 )
 
 //	@title		Update Reporter Daemon
-//	@version	0.0.1
+//	@version	0.1.0
 //	@description	An API for Reporting Software Updates
 
 //	@contact.name	Gary Greene
@@ -67,7 +67,25 @@ import (
 
 func createDB(dbName string) (bool, error) {
 	log.Println("INFO: DB doesn't exist. Attempt to create it")
-	const schema string = `CREATE TABLE IF NOT EXISTS OsFamilies (
+	const schema string = `CREATE TABLE IF NOT EXISTS Architectures (
+		Id                      INTEGER		PRIMARY KEY AUTOINCREMENT	UNIQUE	NOT NULL,
+		ArchName                STRING		UNIQUE				NOT NULL,
+		CreationDate            DATETIME	NOT NULL			DEFAULT (CURRENT_TIMESTAMP)
+	);
+
+	INSERT INTO Architectures (Id, ArchName) VALUES (1, 'noarch');
+	INSERT INTO Architectures (Id, ArchName) VALUES (2, 'aarch64');
+	INSERT INTO Architectures (Id, ArchName) VALUES (3, 'x86');
+	INSERT INTO Architectures (Id, ArchName) VALUES (4, 'x86_64');
+
+	CREATE TABLE IF NOT EXISTS OperatingSystems (
+		Id                      INTEGER		PRIMARY KEY AUTOINCREMENT	UNIQUE	NOT NULL,
+		OsIdName                STRING		NOT NULL,
+		OsVersion               STRING		NOT NULL,
+		CreationDate            DATETIME	NOT NULL			DEFAULT (CURRENT_TIMESTAMP)
+	);
+
+	CREATE TABLE IF NOT EXISTS OsFamilies (
 		Id                      INTEGER		PRIMARY KEY AUTOINCREMENT	UNIQUE	NOT NULL,
 		FamilyName              STRING		UNIQUE				NOT NULL,
 		CreationDate            DATETIME	NOT NULL			DEFAULT (CURRENT_TIMESTAMP)
@@ -78,7 +96,7 @@ func createDB(dbName string) (bool, error) {
 	INSERT INTO OsFamilies (Id, FamilyName) VALUES (3, 'windows');
 
 	CREATE TABLE IF NOT EXISTS Roles (
-		Id                      INTEGER	PRIMARY KEY AUTOINCREMENT,
+		Id                      INTEGER		PRIMARY KEY AUTOINCREMENT	UNIQUE	NOT NULL,
 		RoleName                STRING		UNIQUE				NOT NULL,
 		Description             STRING		NOT NULL,
 		CreationDate            DATETIME	NOT NULL		 	DEFAULT (CURRENT_TIMESTAMP)
@@ -88,6 +106,24 @@ func createDB(dbName string) (bool, error) {
 		VALUES (1, 'SYSTEM', 'Built-in system role');
 	INSERT INTO Roles (Id, RoleName, Description)
 		VALUES (2, 'administrators', 'Accounts that have full administrative rights to the system');
+
+	CREATE TABLE IF NOT EXISTS Systems (
+		Id                      INTEGER		PRIMARY KEY AUTOINCREMENT		UNIQUE	NOT NULL,
+		FQDN                    STRING		UNIQUE					NOT NULL,
+		OsFamilyId              INTEGER		REFERENCES OsFamilies (Id)		NOT NULL,
+		OsId                    INTEGER		REFERENCES OperatingSystems (Id)	NOT NULL,
+		ArchId                  INTEGER		REFERENCES Architectures (Id)		NOT NULL,
+		CreationDate            DATETIME	NOT NULL				DEFAULT (CURRENT_TIMESTAMP)
+	);
+
+	CREATE TABLE IF NOT EXISTS UpdateRecords (
+		Id                      INTEGER		PRIMARY KEY AUTOINCREMENT		UNIQUE	NOT NULL,
+		SystemId                INTEGER		REFERENCES Systems (Id)			UNIQUE	NOT NULL,
+		UpdateCount		INTEGER		NOT NULL,
+		UpdateRecord            BLOB		NOT NULL,
+		CreationDate            INTEGER		NOT NULL				DEFAULT (CURRENT_TIMESTAMP)
+		LastUpdateDate          DATETIME	NOT NULL				DEFAULT (CURRENT_TIMESTAMP)
+	);
 
 	CREATE TABLE IF NOT EXISTS Users (
 		Id                      INTEGER 	PRIMARY KEY AUTOINCREMENT	UNIQUE	NOT NULL,

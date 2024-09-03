@@ -140,7 +140,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: Update Reporter Daemon
-  version: 0.0.1
+  version: 0.1.0
 paths:
   /health:
     get:
